@@ -32,17 +32,15 @@ class ShippingCostsController extends AppController
                 return;
             }
 
-            // Extract values
             $weight = (float)$data['weight'];
             $length = (float)$data['length'];
             $width  = (float)$data['width'];
             $height = (float)$data['height'];
             
-            // Calculate weights
             $volumetricWeight = ($length * $width * $height) / 5000;
             $billableWeight = max($weight, $volumetricWeight);
 
-            // Carrier selection
+
             $carrier = $data['carrier'];
             $pricing = [
                 'royal_mail' => ['base' => 3.0, 'rate' => 1.1],
@@ -51,7 +49,6 @@ class ShippingCostsController extends AppController
             ];
             $selected = $pricing[$carrier];
 
-            // Delivery speed
             $speed = $data['speed'];
             $speedMultiplier = [
                 'standard' => 1.0,
@@ -59,10 +56,9 @@ class ShippingCostsController extends AppController
                 'next_day' => 1.8,
             ];
 
-            // Final cost
+
             $cost = ($selected['base'] + ($billableWeight * $selected['rate'])) * $speedMultiplier[$speed];
 
-            // ---- SAVE TO DATABASE ----
             $this->Quotes = $this->fetchTable('Quotes');
             $quote = $this->Quotes->newEmptyEntity();
 
@@ -78,7 +74,6 @@ class ShippingCostsController extends AppController
 
             $this->Quotes->save($quote);
 
-            // Send values to view
             $this->set(compact(
                 'weight',
                 'length',
