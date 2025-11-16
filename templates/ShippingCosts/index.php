@@ -1,6 +1,13 @@
 <div class="container mt-4">
     <div class="card p-4 shadow">
 <h1>Shipping Cost Estimator</h1>
+<div class="text-end mb-3">
+    <a href="<?= $this->Url->build(['controller' => 'ShippingCosts', 'action' => 'history']) ?>"
+       class="btn btn-success">
+        View Quote History
+    </a>
+</div>
+
 <?php if (isset($errors) && !empty($errors)): ?>
     <div class="alert alert-danger">
         <strong>Please correct the following errors:</strong>
@@ -37,8 +44,9 @@
         'next_day' => 'Next-Day (1.8x)',
     ]
 ]) ?>
-    <?= $this->Form->button('Calculate Shipping Cost') ?>
-<?= $this->Form->end() ?>
+    <?= $this->Form->button('Calculate Shipping Cost', [
+    'class' => 'btn btn-success'
+]) ?>
 
 <?php if (isset($cost)): ?>
     <hr>

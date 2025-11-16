@@ -32,5 +32,5 @@
 
     <?php endif; ?>
 
-    <a href="/shipping-costs" class="btn btn-primary mt-3">Back to Estimator</a>
+    <a href="/shipping-costs" class="btn btn-success">Back to Estimator</a>
 </div>
