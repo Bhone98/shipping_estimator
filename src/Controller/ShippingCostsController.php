@@ -61,7 +61,6 @@ class ShippingCostsController extends AppController
 
             $this->Quotes = $this->fetchTable('Quotes');
             $quote = $this->Quotes->newEmptyEntity();
-
             $quote->weight = $weight;
             $quote->length = $length;
             $quote->width = $width;
@@ -86,5 +85,17 @@ class ShippingCostsController extends AppController
                 'speed'
             ));
         }
+    }
+     public function history()
+    {
+        $this->Quotes = $this->fetchTable('Quotes');
+
+        $quotes = $this->Quotes
+            ->find()
+            ->order(['id' => 'DESC'])
+            ->limit(20)
+            ->all();
+
+        $this->set(compact('quotes'));
     }
 }
