@@ -86,6 +86,71 @@ class ShippingCostsController extends AppController
             ));
         }
     }
+    public function apiEstimate()
+{
+    $this->request->allowMethod(['get']);
+
+    // Get query params
+    $weight = (float)$this->request->getQuery('weight');
+    $length = (float)$this->request->getQuery('length');
+    $width  = (float)$this->request->getQuery('width');
+    $height = (float)$this->request->getQuery('height');
+    $carrier = $this->request->getQuery('carrier');
+    $speed   = $this->request->getQuery('speed');
+
+    // Basic validation
+    if (!$weight || !$length || !$width || !$height || !$carrier || !$speed) {
+        return $this->response
+            ->withType('application/json')
+            ->withStringBody(json_encode([
+                'error' => 'Missing or invalid parameters'
+            ]));
+    }
+
+    // Calculations
+    $volumetricWeight = ($length * $width * $height) / 5000;
+    $billableWeight = max($weight, $volumetricWeight);
+
+    $pricing = [
+        'royal_mail' => ['base' => 3.0, 'rate' => 1.1],
+        'dhl'        => ['base' => 5.0, 'rate' => 1.5],
+        'ups'        => ['base' => 4.0, 'rate' => 1.3],
+    ];
+
+    if (!isset($pricing[$carrier])) {
+        return $this->response
+            ->withType('application/json')
+            ->withStringBody(json_encode(['error' => 'Invalid carrier']));
+    }
+
+    $speedMultiplier = [
+        'standard' => 1.0,
+        'express'  => 1.3,
+        'next_day' => 1.8,
+    ];
+
+    if (!isset($speedMultiplier[$speed])) {
+        return $this->response
+            ->withType('application/json')
+            ->withStringBody(json_encode(['error' => 'Invalid speed']));
+    }
+
+    $selected = $pricing[$carrier];
+    $cost = ($selected['base'] + ($billableWeight * $selected['rate'])) * $speedMultiplier[$speed];
+
+    // Return JSON
+    return $this->response
+        ->withType('application/json')
+        ->withStringBody(json_encode([
+            'weight' => $weight,
+            'volumetric_weight' => round($volumetricWeight, 2),
+            'billable_weight' => round($billableWeight, 2),
+            'cost' => round($cost, 2),
+            'carrier' => $carrier,
+            'speed' => $speed
+        ]));
+}
+
      public function history()
     {
         $this->Quotes = $this->fetchTable('Quotes');

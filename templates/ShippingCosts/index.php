@@ -57,6 +57,32 @@
     <div class="alert alert-success mt-4">
     <h3>Estimated Cost: £<?= number_format($cost, 2) ?></h3>
     </div>
+    <?= $this->Form->button('Get JSON Output', [
+    'type' => 'button',
+    'id' => 'jsonBtn',
+    'class' => 'btn btn-success'
+]) ?>
+<pre id="jsonOutput" class="mt-4 p-3 bg-light border" style="display:none;"></pre>
+<script>
+document.getElementById('jsonBtn')?.addEventListener('click', function() {
+
+    const form = document.querySelector('form');
+    const formData = new FormData(form);
+    const params = new URLSearchParams(formData).toString();
+
+    fetch('/shipping-costs/api/estimate?' + params)
+        .then(response => response.json())
+        .then(data => {
+            const output = document.getElementById('jsonOutput');
+            output.style.display = 'block';
+            output.textContent = JSON.stringify(data, null, 4);
+        })
+        .catch(error => {
+            alert("Error calling API: " + error);
+        });
+});
+</script>
+
 <?php endif; ?>
 </div>
 </div>

@@ -48,6 +48,10 @@ return function (RouteBuilder $routes): void {
      * `{action}` markers.
      */
     $routes->setRouteClass(DashedRoute::class);
+    $routes->connect(
+    '/shipping-costs/api/estimate',
+    ['controller' => 'ShippingCosts', 'action' => 'apiEstimate']
+);
     $routes->connect('/history', ['controller' => 'ShippingCosts', 'action' => 'history']);
     $routes->scope('/', function (RouteBuilder $builder): void {
         /*
